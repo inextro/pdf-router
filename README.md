@@ -30,9 +30,19 @@ Your folders are added to the Zotero folders, so this also works without Zotero.
 ## Requirements
 
 - macOS 14 or later, Apple Silicon
-- Xcode Command Line Tools (`swiftc`)
+- Xcode Command Line Tools (`swiftc`), only to build from source
 
 ## Install
+
+1. Download `PDFRouter-<version>.zip` from the [latest release](https://github.com/inextro/pdf-router/releases/latest).
+2. Unzip it and move `PDFRouter.app` to your Applications folder.
+3. The app is not notarized by Apple, so macOS blocks it the first time. Open it once, then go to
+   **System Settings → Privacy & Security** and click **Open Anyway**. Opening it shows the folder settings window.
+   Alternatively, run `xattr -dr com.apple.quarantine /Applications/PDFRouter.app` in Terminal.
+4. Make it the default PDF app: select a PDF in Finder, press `⌘I`, choose PDFRouter under **Open with**,
+   and click **Change All…**.
+
+### Build from source
 
 ```sh
 ./scripts/build-app.sh --install
@@ -40,12 +50,13 @@ Your folders are added to the Zotero folders, so this also works without Zotero.
 
 This builds `build/PDFRouter.app`, copies it to `~/Applications`, and makes it the default app for PDFs.
 
+To publish a release, bump `CFBundleShortVersionString` in `Resources/Info.plist`, add a matching
+`## <version>` entry to [CHANGELOG.md](CHANGELOG.md), commit and push, then run `./scripts/release.sh`.
+
 ## Uninstall
 
-```sh
-swift scripts/set-default.swift /System/Applications/Preview.app
-rm -rf ~/Applications/PDFRouter.app
-```
+Make Preview the default PDF app again (Finder `⌘I` → **Open with** → Preview → **Change All…**, or
+`swift scripts/set-default.swift /System/Applications/Preview.app`), then delete `PDFRouter.app`.
 
 ## Notes
 

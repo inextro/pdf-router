@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # PDFRouter.app 번들을 build/에 만든다.
 #   --install  ~/Applications 에 설치하고 PDF 기본 앱으로 지정한다.
+#   --zip      배포용 build/PDFRouter-<버전>.zip 을 만든다.
 #   되돌리기: swift scripts/set-default.swift /System/Applications/Preview.app
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -26,6 +27,13 @@ for arg in "$@"; do
       "$LSREGISTER" -u "$APP" 2>/dev/null || true
       echo "installed: $HOME/Applications/PDFRouter.app"
       echo "PDF 기본 앱: $(swift scripts/set-default.swift "$HOME/Applications/PDFRouter.app" | tail -1)"
+      ;;
+    --zip)
+      VERSION="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' Resources/Info.plist)"
+      ZIP="build/PDFRouter-$VERSION.zip"
+      rm -f "$ZIP"
+      ditto -c -k --keepParent "$APP" "$ZIP"
+      echo "zipped: $ZIP"
       ;;
   esac
 done
